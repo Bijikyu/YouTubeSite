@@ -1,0 +1,5 @@
+The `SubscriptionPage.js` file defines a React component named `SubscriptionPage` that renders a list of subscription videos for a user. It utilizes React hooks such as `useState` and `useEffect` to manage state and side effects, respectively. The component makes a POST request to an API endpoint (`/api/video/getSubscriptionVideos`) using Axios to fetch videos that the user is subscribed to, based on the user's ID stored in `localStorage`.
+
+The page includes a grid layout where each video is presented as a card with a thumbnail, title, writer's avatar, writer's name, view count, and the date the video was created, formatted using the `moment` library. The video duration is displayed as an overlay on the thumbnail. The `antd` library is used for UI components like `Card`, `Row`, `Col`, and `Typography`. The `FaCode` icon from `react-icons/fa` is imported but not used in the provided code snippet.
+
+The component's layout consists of a title labeled "Recommended" and a responsive grid that adapts to different screen sizes, with cards for each video. The `SubscriptionPage` component is exported as the default export of the module.

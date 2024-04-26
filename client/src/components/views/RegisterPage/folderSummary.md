@@ -1,0 +1,9 @@
+The `RegisterPage.js` file contains a React component that serves as the user registration interface for an application. It leverages the Formik library to manage form state and submissions, and Yup for defining validation schemas to ensure that user inputs meet certain criteria. The UI components are sourced from Ant Design, providing a structured and styled layout for the form elements.
+
+The component initializes with default empty values for fields such as email, name, last name, password, and confirmPassword. It includes a validation schema that requires the name, last name, and email to be filled out, with the email being checked for a valid format. Passwords must be at least six characters long, and the confirmPassword field must match the password field.
+
+Upon form submission, the component simulates an asynchronous operation and dispatches a `registerUser` action, provided by Redux, with the user's data including a generated Gravatar URL based on the current timestamp. If the registration is successful, the user is redirected to the login page; otherwise, an error message is displayed.
+
+The form layout is configured with specific column spans for different screen sizes, ensuring responsiveness. The form items include input fields for the user's name, last name, email, and password, each with conditional styling and feedback based on validation errors. A submit button is also provided, which is disabled during the form submission process to prevent multiple submissions.
+
+The `RegisterPage` component is exported as the default export of the file, making it available for use in other parts of the application.
