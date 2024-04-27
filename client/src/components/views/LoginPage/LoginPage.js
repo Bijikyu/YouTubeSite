@@ -1,27 +1,29 @@
-import React, { useState } from "react";
-import { withRouter } from "react-router-dom";
-import { loginUser } from "../../../_actions/user_actions";
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { Form, Icon, Input, Button, Checkbox, Typography } from 'antd';
-import { useDispatch } from "react-redux";
+// LoginPage component: This file defines a React component for the login page using Formik for form handling and Yup for validation. It also uses Redux for state management and Ant Design components for UI elements.
 
-const { Title } = Typography;
+import React, { useState } from "react"; // Importing React and the useState hook from the React library
+import { withRouter } from "react-router-dom"; // Importing withRouter HOC from react-router-dom for routing
+import { loginUser } from "../../../_actions/user_actions"; // Importing loginUser action from the user_actions file
+import { Formik } from 'formik'; // Importing Formik for form handling
+import * as Yup from 'yup'; // Importing Yup for value parsing and validation
+import { Form, Icon, Input, Button, Checkbox, Typography } from 'antd'; // Importing UI components from antd library
+import { useDispatch } from "react-redux"; // Importing useDispatch hook from react-redux for dispatching actions
 
-function LoginPage(props) {
-  const dispatch = useDispatch();
-  const rememberMeChecked = localStorage.getItem("rememberMe") ? true : false;
+const { Title } = Typography; // Destructuring Title from Typography for use in JSX
 
-  const [formErrorMessage, setFormErrorMessage] = useState('')
-  const [rememberMe, setRememberMe] = useState(rememberMeChecked)
+function LoginPage(props) { // LoginPage component definition
+  const dispatch = useDispatch(); // Hook to dispatch actions
+  const rememberMeChecked = localStorage.getItem("rememberMe") ? true : false; // Check if 'rememberMe' is stored in localStorage
 
-  const handleRememberMe = () => {
+  const [formErrorMessage, setFormErrorMessage] = useState('') // State for form error message
+  const [rememberMe, setRememberMe] = useState(rememberMeChecked) // State for remember me checkbox
+
+  const handleRememberMe = () => { // Toggle remember me state
     setRememberMe(!rememberMe)
   };
 
-  const initialEmail = localStorage.getItem("rememberMe") ? localStorage.getItem("rememberMe") : '';
+  const initialEmail = localStorage.getItem("rememberMe") ? localStorage.getItem("rememberMe") : ''; // Get initial email from localStorage if 'rememberMe' is checked
 
-  return (
+  return ( // Render the login form using Formik
     <Formik
       initialValues={{
         email: initialEmail,
@@ -144,6 +146,4 @@ function LoginPage(props) {
   );
 };
 
-export default withRouter(LoginPage);
-
-
+export default withRouter(LoginPage); // Exporting LoginPage component wrapped with withRouter HOC for routing purposes

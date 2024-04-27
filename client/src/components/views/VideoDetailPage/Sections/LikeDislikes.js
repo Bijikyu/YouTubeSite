@@ -1,147 +1,145 @@
-import React,{useEffect,useState} from 'react';
-import { Tooltip, Icon } from 'antd';
-import Axios from 'axios';
+// This is a React component for handling like and dislike actions on a video or comment.
+import React,{useEffect,useState} from 'react'; // Importing React hooks and React itself
+import { Tooltip, Icon } from 'antd'; // Importing Tooltip and Icon components from antd library
+import Axios from 'axios'; // Importing Axios for making HTTP requests
 
+function LikeDislikes(props) { // This component manages the like and dislike functionality
 
-function LikeDislikes(props) {
+    const [Likes, setLikes] = useState(0) // State to keep track of the number of likes
+    const [Dislikes, setDislikes] = useState(0) // State to keep track of the number of dislikes
+    const [LikeAction, setLikeAction] = useState(null) // State to keep track of the user's like action
+    const [DisLikeAction, setDisLikeAction] = useState(null) // State to keep track of the user's dislike action
 
-    const [Likes, setLikes] = useState(0)
-    const [Dislikes, setDislikes] = useState(0)
-    const [LikeAction, setLikeAction] = useState(null)
-    const [DisLikeAction, setDisLikeAction] = useState(null)
+    let variable = {} // Variable to hold request payload
+    if(props.video){ // Check if the props indicate a video
+        variable = {videoId: props.videoId, userId: props.userId } // Set payload for video
+    }else{ // If not a video, it must be a comment
+        variable = {commentId: props.commentId, userId:props.userId} // Set payload for comment
+    }
 
-    let variable = {}
-        if(props.video){
-            variable = {videoId: props.videoId, userId: props.userId }
-        }else{
-            variable = {commentId: props.commentId, userId:props.userId}
-        }
-    
-
+    // This useEffect hook is used to fetch the initial like and dislike data when the component mounts
     useEffect(() => {
-        Axios.post('/api/like/getLikes',variable)
+        Axios.post('/api/like/getLikes',variable) // Making a POST request to get likes
         .then(response=>{
-            if(response.data.success){
-                // 얼마나 많은 좋아요를 받았는지
-                // console.log('getLikes',response.data);
-                setLikes(response.data.likes.length)
+            if(response.data.success){ // Check if the request was successful
+                setLikes(response.data.likes.length) // Update the number of likes
 
-                // 내가 이미 좋아요를 눌렀는지
-                response.data.likes.map(like => {
-                    if(like.userId === props.userId){
-                        setLikeAction('liked')
+                response.data.likes.map(like => { // Iterate through the likes to check if the user has liked
+                    if(like.userId === props.userId){ // Check if the user has already liked
+                        setLikeAction('liked') // Set the like action state to 'liked'
                     }
                 })
-            }else{
-                alert('Likes에 정보를 가져오지 못했습니다')
+            }else{ // If the request was not successful
+                alert('Likes에 정보를 가져오지 못했습니다') // Alert the user that likes could not be fetched
             }
         })
 
-        Axios.post('/api/like/getDislikes',variable)
+        Axios.post('/api/like/getDislikes',variable) // Making a POST request to get dislikes
         .then(response=>{
-            if(response.data.success){
-                // 얼마나 많은 싫어요를 받았는지
-                setDislikes(response.data.dislikes.length)
+            if(response.data.success){ // Check if the request was successful
+                setDislikes(response.data.dislikes.length) // Update the number of dislikes
 
-                // 내가 이미 싫어요를 눌렀는지
-                response.data.dislikes.map(dislikes => {
-                    if(dislikes.userId === props.userId){
-                        setDisLikeAction('disliked')
+                response.data.dislikes.map(dislikes => { // Iterate through the dislikes to check if the user has disliked
+                    if(dislikes.userId === props.userId){ // Check if the user has already disliked
+                        setDisLikeAction('disliked') // Set the dislike action state to 'disliked'
                     }
                 })
-            }else{
-                alert('DisLikes에 정보를 가져오지 못했습니다')
+            }else{ // If the request was not successful
+                alert('DisLikes에 정보를 가져오지 못했습니다') // Alert the user that dislikes could not be fetched
             }
         })
 
-    }, [])
+    }, []) // The empty array ensures this effect runs only once after the initial render
 
+    // Function to handle like action when the like button is clicked
     const onLike = () => {
-        if(LikeAction === null){
-            Axios.post('/api/like/upLike', variable)
+        if(LikeAction === null){ // If the user has not liked yet
+            Axios.post('/api/like/upLike', variable) // Make a POST request to like the item
                 .then(response => {
-                    if(response.data.success){
-                        setLikes(Likes + 1)
-                        setLikeAction('liked')
+                    if(response.data.success){ // If the request was successful
+                        setLikes(Likes + 1) // Increment the likes count
+                        setLikeAction('liked') // Set the like action to 'liked'
 
-                        if(DisLikeAction !== null){
-                            setDisLikeAction(null)
-                            setDislikes(Dislikes -1)
+                        if(DisLikeAction !== null){ // If the user has disliked before
+                            setDisLikeAction(null) // Remove the dislike action
+                            setDislikes(Dislikes -1) // Decrement the dislikes count
                         }
-                    }else{
-                        alert('Like를 올리지 못하였습니다')
+                    }else{ // If the request was not successful
+                        alert('Like를 올리지 못하였습니다') // Alert the user that the like could not be incremented
                     }
                 })
             
-        }else{
+        }else{ // If the user has already liked
 
-            Axios.post('/api/like/unLike', variable)
+            Axios.post('/api/like/unLike', variable) // Make a POST request to unlike the item
             .then(response => {
-                if(response.data.success){
-                    setLikes(Likes - 1)
-                    setLikeAction(null)
+                if(response.data.success){ // If the request was successful
+                    setLikes(Likes - 1) // Decrement the likes count
+                    setLikeAction(null) // Remove the like action
                     }
-                else{
-                    alert('Like을 내리지 못하였습니다')
+                else{ // If the request was not successful
+                    alert('Like을 내리지 못하였습니다') // Alert the user that the like could not be decremented
                 }
             })
         }
     }
 
+    // Function to handle dislike action when the dislike button is clicked
     const onDislike = () => {
 
-        if(DisLikeAction !== null){
-            Axios.post('/api/like/unDislike',variable)
+        if(DisLikeAction !== null){ // If the user has already disliked
+            Axios.post('/api/like/unDislike',variable) // Make a POST request to remove the dislike
             .then(response => {
-                if(response.data.success){
-                    setDislikes(Dislikes - 1)
-                    setDisLikeAction(null)
-                }else{
-                    alert('dislike을 지우지 못했습니다')
+                if(response.data.success){ // If the request was successful
+                    setDislikes(Dislikes - 1) // Decrement the dislikes count
+                    setDisLikeAction(null) // Remove the dislike action
+                }else{ // If the request was not successful
+                    alert('dislike을 지우지 못했습니다') // Alert the user that the dislike could not be removed
                 }
             })
-        }else{
-            Axios.post('/api/like/upDislike',variable)
+        }else{ // If the user has not disliked yet
+            Axios.post('/api/like/upDislike',variable) // Make a POST request to dislike the item
             .then(response => {
-                if(response.data.success){
-                    setDislikes(DisLikeAction + 1)
-                    setDisLikeAction('disliked')
+                if(response.data.success){ // If the request was successful
+                    setDislikes(Dislikes + 1) // Increment the dislikes count
+                    setDisLikeAction('disliked') // Set the dislike action to 'disliked'
 
-                    if(LikeAction !== null){
-                        setLikeAction(null)
-                        setLikes(Likes -1)
+                    if(LikeAction !== null){ // If the user has liked before
+                        setLikeAction(null) // Remove the like action
+                        setLikes(Likes -1) // Decrement the likes count
                     }
-                }else{
-                    alert('dislike을 지우지 못했습니다')
+                }else{ // If the request was not successful
+                    alert('dislike을 지우지 못했습니다') // Alert the user that the dislike could not be incremented
                 }
             })
         }
     }
 
+    // The JSX returned by the component to render the like and dislike buttons with their respective counts
     return (
         <div>
         <span key="comment-basic-like">
-            <Tooltip title="Like">
-                <Icon type="like"
-                    theme={LikeAction === 'liked' ? 'filled' : 'outlined'}
-                    onClick={onLike}
+            <Tooltip title="Like"> // Tooltip component to show a tooltip on hover
+                <Icon type="like" // Icon component to display a like icon
+                    theme={LikeAction === 'liked' ? 'filled' : 'outlined'} // Change the icon theme based on the like action
+                    onClick={onLike} // Set the onClick handler to the onLike function
                 />                
             </Tooltip>
-            <span style={{paddingLeft:"8px", cursor:"auto"}}>{Likes}</span>
+            <span style={{paddingLeft:"8px", cursor:"auto"}}>{Likes}</span> // Display the number of likes
         </span>&nbsp;&nbsp;
         
         
         <span key="comment-basic-dislike">
-            <Tooltip title="Dislike">
-                <Icon type="dislike"
-                    theme={DisLikeAction === 'disliked' ? 'filled' : 'outlined'}
-                    onClick={onDislike}
+            <Tooltip title="Dislike"> // Tooltip component to show a tooltip on hover
+                <Icon type="dislike" // Icon component to display a dislike icon
+                    theme={DisLikeAction === 'disliked' ? 'filled' : 'outlined'} // Change the icon theme based on the dislike action
+                    onClick={onDislike} // Set the onClick handler to the onDislike function
                 />                
             </Tooltip>
-    <span style={{paddingLeft:"8px", cursor:"auto"}}>{Dislikes}</span>
+    <span style={{paddingLeft:"8px", cursor:"auto"}}>{Dislikes}</span> // Display the number of dislikes
         </span>&nbsp;&nbsp;
         </div>
     )
 }
 
-export default LikeDislikes
+export default LikeDislikes // Export the LikeDislikes component for use in other parts of the application

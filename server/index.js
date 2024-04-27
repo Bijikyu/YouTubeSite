@@ -1,63 +1,54 @@
-const express = require("express");
-const app = express();
-const path = require("path");
-const cors = require('cors')
+// This is an Express server module for a web application that handles routes for users, videos, subscriptions, comments, and likes.
+// It also serves static files in production and connects to a MongoDB database.
 
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+const express = require("express"); // Require the express module
+const app = express(); // Create an instance of express
+const path = require("path"); // Require the path module to work with file and directory paths
+const cors = require('cors') // Require the cors module to enable Cross-Origin Resource Sharing
 
-const config = require("./config/key");
+const bodyParser = require("body-parser"); // Require the body-parser module to parse incoming request bodies
+const cookieParser = require("cookie-parser"); // Require the cookie-parser module to parse cookies attached to the client request object
 
-// const mongoose = require("mongoose");
-// mongoose
-//   .connect(config.mongoURI, { useNewUrlParser: true })
-//   .then(() => console.log("DB connected"))
-//   .catch(err => console.error(err));
+const config = require("./config/key"); // Require the config module to get the database configuration
 
+// Connect to MongoDB using mongoose
 const mongoose = require("mongoose");
 const connect = mongoose.connect(config.mongoURI,
   {
     useNewUrlParser: true, useUnifiedTopology: true,
     useCreateIndex: true, useFindAndModify: false
   })
-  .then(() => console.log('MongoDB Connected...'))
-  .catch(err => console.log(err));
+  .then(() => console.log('MongoDB Connected...')) // Log success message when connected
+  .catch(err => console.log(err)); // Log error if connection fails
 
-app.use(cors())
+app.use(cors()) // Enable all CORS requests
 
-//to not get any deprecation warning or error
-//support parsing of application/x-www-form-urlencoded post data
-app.use(bodyParser.urlencoded({ extended: true }));
-//to get json data
-// support parsing of application/json type post data
-app.use(bodyParser.json());
-app.use(cookieParser());
+// Middleware to parse request bodies and cookies
+app.use(bodyParser.urlencoded({ extended: true })); // Parse application/x-www-form-urlencoded
+app.use(bodyParser.json()); // Parse application/json
+app.use(cookieParser()); // Parse cookies
 
-app.use('/api/users', require('./routes/users'));
-app.use('/api/video', require('./routes/video'))
-app.use('/api/subscribe', require('./routes/subscribe'))
-app.use('/api/comment', require('./routes/comment'))
-app.use('/api/like',require('./routes/like'))
+// Define routes for different features of the application
+app.use('/api/users', require('./routes/users')); // User-related routes
+app.use('/api/video', require('./routes/video')); // Video-related routes
+app.use('/api/subscribe', require('./routes/subscribe')); // Subscription-related routes
+app.use('/api/comment', require('./routes/comment')); // Comment-related routes
+app.use('/api/like',require('./routes/like')); // Like-related routes
 
-//use this to show the image you have in node js server to client (react js)
-//https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
-app.use('/uploads', express.static('uploads'));
+// Serve uploaded files as static assets
+app.use('/uploads', express.static('uploads')); // Static route for uploaded files
 
-// Serve static assets if in production
+// Serve static assets in production environment
 if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build")); // Serve static files from client/build directory
 
-  // Set static folder   
-  // All the javascript and css files will be read and served from this folder
-  app.use(express.static("client/build"));
-
-  // index.html for all page routes    html or routing and naviagtion
-  app.get("*", (req, res) => {
+  app.get("*", (req, res) => { // Serve index.html file for any route
     res.sendFile(path.resolve(__dirname, "../client", "build", "index.html"));
   });
 }
 
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5000 // Set the port to the environment variable or default to 5000
 
-app.listen(port, () => {
-  console.log(`Server Listening on ${port}`)
+app.listen(port, () => { // Start the server and listen on the specified port
+  console.log(`Server Listening on ${port}`) // Log the listening message with the port number
 });

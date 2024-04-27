@@ -1,0 +1,7 @@
+The `VideoUploadPage.js` file is a React component used for uploading videos on a web platform. It utilizes the `useState` hook for state management and the `useSelector` hook to access the Redux store's state. The component includes a form that allows users to input video details such as title, description, privacy settings, and category. It uses the `antd` library for UI components like Typography, Button, Form, Input, and message notifications, and `react-dropzone` for handling file uploads.
+
+The component defines options for privacy settings (Private or Public) and video categories (e.g., Film & Animation, Autos & Vehicles, Music, Pets & Animals). The state is managed for various properties including video title, description, privacy, category, file path, duration, and thumbnail path.
+
+The file upload process is handled by `Axios` for making HTTP requests to the server for uploading video files and generating thumbnails. Upon successful upload, the video's metadata is submitted to the server, and the user is redirected to the home page with a success message. Error handling is also included to alert the user in case of upload failures.
+
+The component's JSX returns a structured form with a drop zone for file uploads, input fields for video details, and a submit button. Thumbnails are displayed if available after the upload process. The `VideoUploadPage` component is exported for use elsewhere in the application.
